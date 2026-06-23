@@ -25,9 +25,21 @@ export const venueSchema = z.object({
   priceFrom: z.coerce.number().nonnegative(),
   phone: z.string().min(3),
   email: z.string().email(),
-  imageUrl: z.string().url(),
+  imageUrl: z.string().min(1),
+  galleryImages: z.array(z.string().min(1)).optional(),
+  latitude: z.coerce.number().min(-90).max(90).optional().nullable(),
+  longitude: z.coerce.number().min(-180).max(180).optional().nullable(),
+  googleMapsUrl: z.string().optional().nullable(),
+  sports: z.array(z.string().min(2)).optional(),
+  courtCount: z.coerce.number().int().positive().optional().nullable(),
+  parking: z.boolean().optional(),
+  lockerRooms: z.boolean().optional(),
+  floodlights: z.boolean().optional(),
+  reservationsEnabled: z.boolean().optional(),
+  workingHours: z.string().optional().nullable(),
   isFeatured: z.boolean().optional(),
-  isActive: z.boolean().optional()
+  isActive: z.boolean().optional(),
+  ownerId: z.string().optional().nullable()
 });
 
 export const contactSchema = z.object({
@@ -63,7 +75,11 @@ export const forumPostSchema = z.object({
 });
 
 export const roleSchema = z.object({
-  role: z.enum(["USER", "OWNER", "ADMIN", "SUPER_ADMIN"])
+  role: z.enum(["USER", "OWNER", "ADMIN"])
+});
+
+export const userStatusSchema = z.object({
+  isActive: z.boolean()
 });
 
 export const adminCreateUserSchema = z.object({
@@ -71,7 +87,7 @@ export const adminCreateUserSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   phone: z.preprocess(emptyToUndefined, z.string().optional()),
-  role: z.enum(["USER", "OWNER", "ADMIN", "SUPER_ADMIN"]).default("USER")
+  role: z.enum(["USER", "OWNER", "ADMIN"]).default("USER")
 });
 
 export const bookingStatusSchema = z.object({

@@ -39,11 +39,13 @@ model User {
   passwordHash String
   role         Role      @default(USER)
   phone        String?
+  isActive     Boolean   @default(true)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   inquiries    Inquiry[]
   reviews      Review[]
   forumPosts   ForumPost[]
+  venues       Venue[]
 }
 
 model Venue {
@@ -59,12 +61,27 @@ model Venue {
   phone       String
   email       String
   imageUrl    String
+  galleryImages String[]      @default([])
+  latitude    Decimal?      @db.Decimal(9, 6)
+  longitude   Decimal?      @db.Decimal(9, 6)
+  googleMapsUrl String?
+  sports      String[]      @default([])
+  courtCount  Int?
+  parking     Boolean       @default(false)
+  lockerRooms Boolean       @default(false)
+  floodlights Boolean       @default(false)
+  reservationsEnabled Boolean @default(true)
+  workingHours String?
   isFeatured  Boolean       @default(false)
   isActive    Boolean       @default(true)
+  ownerId     String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   inquiries   Inquiry[]
   reviews     Review[]
+  owner       User?         @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+
+  @@index([ownerId])
 }
 
 model ContactMessage {

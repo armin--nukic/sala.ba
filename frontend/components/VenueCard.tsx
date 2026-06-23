@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarPlus, Edit3, Eye, MapPin, Star, Users } from "lucide-react";
+import { CalendarPlus, Eye, MapPin, Star, Users } from "lucide-react";
 import type { Venue } from "@/lib/types";
 import { useLanguage } from "@/components/LanguageProvider";
 import styles from "./VenueCard.module.css";
@@ -16,13 +16,15 @@ const ribbons: Record<string, string> = {
   Other: "Custom event"
 };
 
+const fallbackImage = "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=1400&q=80";
+
 export function VenueCard({ venue }: { venue: Venue }) {
   const { t, lang } = useLanguage();
 
   return (
     <article className="card">
       <div className={styles.imageWrap}>
-        <Image src={venue.imageUrl} alt={`${venue.name} venue photo`} fill sizes="(max-width: 768px) 100vw, 33vw" />
+        <Image src={venue.imageUrl || fallbackImage} alt={`${venue.name} venue photo`} fill sizes="(max-width: 768px) 100vw, 33vw" unoptimized />
         {venue.isFeatured && <span className={styles.featured}>Featured</span>}
         <span className={styles.ribbon}>{ribbons[venue.category] ?? "Sala.ba pick"}</span>
       </div>
@@ -43,9 +45,6 @@ export function VenueCard({ venue }: { venue: Venue }) {
             </Link>
             <Link className="btn btn-primary" href={`/sale/${venue.slug}#termin`}>
               <CalendarPlus size={17} /> {t.bookSlot}
-            </Link>
-            <Link className={styles.iconAction} href={`/admin?edit=${venue.id}`} title={t.edit} aria-label={`${t.edit} ${venue.name}`}>
-              <Edit3 size={17} />
             </Link>
           </div>
         </div>

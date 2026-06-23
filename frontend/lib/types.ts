@@ -7,6 +7,7 @@ export type User = {
   email: string;
   role: Role;
   phone?: string | null;
+  isActive?: boolean;
   createdAt?: string;
 };
 
@@ -23,9 +24,32 @@ export type Venue = {
   phone: string;
   email: string;
   imageUrl: string;
+  galleryImages?: string[];
+  latitude?: string | number | null;
+  longitude?: string | number | null;
+  googleMapsUrl?: string | null;
+  sports?: string[];
+  courtCount?: number | null;
+  parking?: boolean;
+  lockerRooms?: boolean;
+  floodlights?: boolean;
+  reservationsEnabled?: boolean;
+  workingHours?: string | null;
   isFeatured: boolean;
   isActive: boolean;
+  ownerId?: string | null;
+  owner?: Pick<User, "id" | "name" | "email"> | null;
   createdAt: string;
+};
+
+export type PaginatedVenues = {
+  venues: Venue[];
+  meta?: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
 };
 
 export type ContactMessage = {

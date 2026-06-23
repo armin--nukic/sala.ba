@@ -27,6 +27,7 @@ const fallbackVenues: Venue[] = [
     imageUrl: "/images/hero-event-hall.png",
     isFeatured: true,
     isActive: true,
+    galleryImages: [],
     createdAt: new Date().toISOString()
   },
   {
@@ -44,6 +45,7 @@ const fallbackVenues: Venue[] = [
     imageUrl: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1400&q=80",
     isFeatured: true,
     isActive: true,
+    galleryImages: [],
     createdAt: new Date().toISOString()
   }
 ];

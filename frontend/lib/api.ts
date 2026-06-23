@@ -1,4 +1,4 @@
-import type { ContactMessage, ForumPost, Inquiry, Review, Role, User, Venue } from "@/lib/types";
+import type { ContactMessage, ForumPost, Inquiry, PaginatedVenues, Review, Role, User, Venue } from "@/lib/types";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4111/api";
 
@@ -28,7 +28,7 @@ type ApiOptions = RequestInit & { token?: string | null };
 
 async function request<T>(path: string, options: ApiOptions = {}): Promise<T> {
   const headers = new Headers(options.headers);
-  headers.set("Content-Type", "application/json");
+  if (!(options.body instanceof FormData)) headers.set("Content-Type", "application/json");
   if (options.token) headers.set("Authorization", `Bearer ${options.token}`);
 
   const response = await fetch(`${apiBaseUrl()}${path}`, {
@@ -53,7 +53,10 @@ export const api = {
   register: (data: { name: string; email: string; password: string; phone?: string }) =>
     request<{ token: string; user: User }>("/auth/register", { method: "POST", body: JSON.stringify(data) }),
   me: (token?: string | null) => request<{ user: User }>("/auth/me", { token, cache: "no-store" }),
-  venues: (query = "") => request<{ venues: Venue[] }>(`/venues${query}`, { cache: "no-store" }),
+  venues: (query = "") => request<PaginatedVenues>(`/venues${query}`, { cache: "no-store" }),
+  venueOptions: () => request<{ cities: string[]; sports: string[] }>("/venues/meta/options", { cache: "no-store" }),
+  adminVenues: (token?: string | null) =>
+    request<{ venues: Venue[] }>("/admin/venues", { token, cache: "no-store" }),
   venue: (slug: string) => request<{ venue: Venue }>(`/venues/${slug}`, { cache: "no-store" }),
   createVenue: (data: Partial<Venue>, token?: string | null) =>
     request<{ venue: Venue }>("/venues", { method: "POST", body: JSON.stringify(data), token }),
@@ -61,6 +64,8 @@ export const api = {
     request<{ venue: Venue }>(`/venues/${id}`, { method: "PUT", body: JSON.stringify(data), token }),
   deleteVenue: (id: string, token?: string | null) =>
     request<void>(`/venues/${id}`, { method: "DELETE", token }),
+  uploadVenueImages: (data: FormData, token?: string | null) =>
+    request<{ images: Array<{ filename: string; url: string }> }>("/uploads/venues", { method: "POST", body: data, token }),
   contact: (data: Record<string, FormDataEntryValue>) =>
     request<{ message: ContactMessage }>("/contact", { method: "POST", body: JSON.stringify(data) }),
   inquiry: (data: Record<string, FormDataEntryValue>, token?: string | null) =>
@@ -81,6 +86,8 @@ export const api = {
     request<{ user: User }>("/admin/users", { method: "POST", body: JSON.stringify(data), token }),
   updateRole: (id: string, role: Role, token?: string | null) =>
     request<{ user: User }>(`/admin/users/${id}/role`, { method: "PUT", body: JSON.stringify({ role }), token }),
+  updateUserStatus: (id: string, isActive: boolean, token?: string | null) =>
+    request<{ user: User }>(`/admin/users/${id}/status`, { method: "PUT", body: JSON.stringify({ isActive }), token }),
   adminMessages: (token?: string | null) =>
     request<{ messages: ContactMessage[] }>("/admin/contact-messages", { token, cache: "no-store" }),
   adminInquiries: (token?: string | null) =>

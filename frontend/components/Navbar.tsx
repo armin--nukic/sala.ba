@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, Moon, Sun, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { useLanguage } from "@/components/LanguageProvider";
 import { useAuth } from "@/components/AuthProvider";
@@ -28,16 +28,33 @@ export function Navbar() {
     ["/contact", t.contact]
   ];
 
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+    document.body.style.overflow = open ? "hidden" : "";
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
   return (
     <header className={styles.header}>
       <div className={clsx("container", styles.nav)}>
         <Link href="/dashboard" className={styles.logo} onClick={() => setOpen(false)} title="Dashboard">
           <BrandLogo />
         </Link>
-        <button className={styles.menuButton} onClick={() => setOpen((value) => !value)} aria-label="Toggle menu">
+        <button className={styles.menuButton} onClick={() => setOpen((value) => !value)} aria-label="Toggle menu" aria-expanded={open} aria-controls="main-navigation">
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
-        <nav className={clsx(styles.links, open && styles.open)}>
+        {open && <button className={styles.backdrop} aria-label="Close menu" onClick={() => setOpen(false)} type="button" />}
+        <nav id="main-navigation" className={clsx(styles.links, open && styles.open)}>
           {links.map(([href, label]) => (
             <Link
               key={href}

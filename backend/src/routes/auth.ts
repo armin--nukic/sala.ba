@@ -9,7 +9,7 @@ import { requireAuth } from "../middleware/auth.js";
 
 export const authRouter = Router();
 
-function publicUser(user: { id: string; name: string; email: string; role: string; phone: string | null }) {
+function publicUser(user: { id: string; name: string; email: string; role: string; phone: string | null; isActive?: boolean }) {
   return user;
 }
 
@@ -47,7 +47,7 @@ authRouter.post(
   asyncHandler(async (req, res) => {
     const data = loginSchema.parse(req.body);
     const user = await prisma.user.findUnique({ where: { email: data.email.toLowerCase() } });
-    if (!user || !(await bcrypt.compare(data.password, user.passwordHash))) {
+    if (!user || !user.isActive || !(await bcrypt.compare(data.password, user.passwordHash))) {
       throw new ApiError(401, "Invalid credentials");
     }
 
@@ -55,7 +55,7 @@ authRouter.post(
     res.cookie("token", token, { httpOnly: true, sameSite: "lax" });
     res.json({
       token,
-      user: publicUser({ id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone })
+      user: publicUser({ id: user.id, name: user.name, email: user.email, role: user.role, phone: user.phone, isActive: user.isActive })
     });
   })
 );
@@ -66,7 +66,7 @@ authRouter.get(
   asyncHandler(async (req, res) => {
     const user = await prisma.user.findUnique({
       where: { id: req.user!.id },
-      select: { id: true, name: true, email: true, role: true, phone: true }
+      select: { id: true, name: true, email: true, role: true, phone: true, isActive: true }
     });
     if (!user) throw new ApiError(404, "User not found");
     res.json({ user });

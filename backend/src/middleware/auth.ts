@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import type { Role } from "@prisma/client";
 import { config } from "../config.js";
+import { prisma } from "../db.js";
 import { ApiError } from "../utils/errors.js";
 import type { JwtUser } from "../types.js";
 
@@ -16,10 +17,17 @@ export function requireAuth(req: Request, _res: Response, next: NextFunction) {
   if (!token) throw new ApiError(401, "Authentication required");
 
   try {
-    req.user = jwt.verify(token, config.jwtSecret) as JwtUser;
-    next();
+    const payload = jwt.verify(token, config.jwtSecret) as JwtUser;
+    prisma.user
+      .findUnique({ where: { id: payload.id }, select: { id: true, email: true, role: true, isActive: true } })
+      .then((user) => {
+        if (!user || !user.isActive) throw new ApiError(401, "User is inactive or no longer exists");
+        req.user = { id: user.id, email: user.email, role: user.role };
+        next();
+      })
+      .catch(next);
   } catch {
-    throw new ApiError(401, "Invalid or expired token");
+    next(new ApiError(401, "Invalid or expired token"));
   }
 }
 
@@ -32,3 +40,4 @@ export function requireRole(roles: Role[]) {
 }
 
 export const adminRoles: Role[] = ["ADMIN", "SUPER_ADMIN"];
+export const venueManagerRoles: Role[] = ["OWNER", "ADMIN", "SUPER_ADMIN"];

@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
+import { Prisma } from "@prisma/client";
 import { ZodError } from "zod";
 
 export class ApiError extends Error {
@@ -30,6 +31,11 @@ export function errorHandler(
 
   if (err instanceof ApiError) {
     return res.status(err.status).json({ message: err.message });
+  }
+
+  if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
+    const target = Array.isArray(err.meta?.target) ? err.meta.target.join(", ") : "unique field";
+    return res.status(409).json({ message: `${target} already exists` });
   }
 
   console.error(err);

@@ -34,6 +34,10 @@
   font-size: 0.86rem;
 }
 
+.backdrop {
+  display: none;
+}
+
 .links a {
   white-space: nowrap;
   border-radius: 999px;
@@ -156,6 +160,24 @@
 @media (max-width: 520px) {
   .nav {
     min-height: 72px;
+    gap: 12px;
+  }
+
+  .links {
+    inset-inline: 12px;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .langGroup {
+    justify-content: center;
+  }
+
+  .actions :global(.btn) {
+    width: 100%;
   }
 }
 
@@ -166,7 +188,7 @@
 
   .links {
     position: absolute;
-    inset: 72px 16px auto 16px;
+    inset: calc(72px + env(safe-area-inset-top)) 16px auto 16px;
     display: none;
     flex-direction: column;
     align-items: stretch;
@@ -174,6 +196,18 @@
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.94);
     box-shadow: 0 22px 70px rgba(17, 24, 39, 0.18);
+    max-height: calc(100dvh - 88px - env(safe-area-inset-bottom));
+    overflow-y: auto;
+    z-index: 2;
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 66px 0 0;
+    border: 0;
+    background: rgba(17, 24, 39, 0.22);
+    z-index: 1;
   }
 
   :global([data-theme="dark"]) .links {

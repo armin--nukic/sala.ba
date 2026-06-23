@@ -13,34 +13,44 @@ const playfair = Fraunces({ subsets: ["latin"], variable: "--font-display", weig
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3111"),
   title: {
-    default: "sala.ba - Sale za svadbe, sport i dogadjaje",
+    default: "sala.ba - Sale za vjencanja, sport i evente",
     template: "%s | sala.ba"
   },
-  description: "Pronadji idealnu salu za svadbu, sport, proslave i dogadjaje u Bosni i Hercegovini.",
+  description: "Pronadji idealnu salu za vjencanje, sport, proslave, konferencije i dijaspora dogadjaje u Bosni i Hercegovini.",
   keywords: [
     "sale za vjencanja",
+    "sale za svadbe",
     "sport sale",
+    "sportske dvorane",
     "rezervacija sale",
     "event prostor",
     "sala.ba",
+    "sala ice lol",
     "Bosna i Hercegovina",
-    "dijaspora rezervacije"
+    "dijaspora rezervacije",
+    "Sarajevo sale",
+    "Mostar sale",
+    "Tuzla sale"
   ],
+  applicationName: "sala.ba",
+  creator: "sala.ba",
+  publisher: "sala.ba",
+  category: "events",
   authors: [{ name: "sala.ba" }],
   openGraph: {
-    title: "sala.ba - Marketplace i CRM za sale",
-    description: "Premium marketplace za sale, termine, rezervacije i vlasnike prostora.",
+    title: "sala.ba - Marketplace za sale i termine",
+    description: "Pretraga sala, rezervacije termina i CRM za vlasnike prostora u BiH.",
     url: "/",
     siteName: "sala.ba",
-    images: [{ url: "/images/hero-event-hall.png", width: 1600, height: 900, alt: "Premium event sala" }],
+    images: [{ url: "/images/hero-marketplace-v2.png", width: 1600, height: 900, alt: "sala.ba marketplace za event prostore" }],
     locale: "bs_BA",
     type: "website"
   },
   twitter: {
     card: "summary_large_image",
-    title: "sala.ba - Sale za svadbe, sport i dogadjaje",
+    title: "sala.ba - Sale za vjencanja, sport i evente",
     description: "Brza pretraga sala, rezervacije termina i CRM za vlasnike prostora.",
-    images: ["/images/hero-event-hall.png"]
+    images: ["/images/hero-marketplace-v2.png"]
   },
   alternates: {
     canonical: "/",

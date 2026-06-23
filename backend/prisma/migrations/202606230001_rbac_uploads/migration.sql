@@ -1,0 +1,11 @@
+ALTER TABLE "User" ADD COLUMN "isActive" BOOLEAN NOT NULL DEFAULT true;
+
+ALTER TABLE "Venue" ADD COLUMN "galleryImages" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];
+ALTER TABLE "Venue" ADD COLUMN "ownerId" TEXT;
+
+ALTER TABLE "Venue"
+  ADD CONSTRAINT "Venue_ownerId_fkey"
+  FOREIGN KEY ("ownerId") REFERENCES "User"("id")
+  ON DELETE SET NULL ON UPDATE CASCADE;
+
+CREATE INDEX "Venue_ownerId_idx" ON "Venue"("ownerId");

@@ -29,6 +29,7 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
       FRONTEND_URL: ${FRONTEND_URL}
+      FRONTEND_URLS: ${FRONTEND_URLS}
       BACKEND_PUBLIC_URL: ${BACKEND_PUBLIC_URL}
       SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL}
       SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD}
@@ -41,6 +42,8 @@ services:
       PORT: 4000
     ports:
       - "127.0.0.1:4111:4000"
+    volumes:
+      - backend_uploads:/app/backend/uploads
     depends_on:
       postgres:
         condition: service_healthy
@@ -65,3 +68,4 @@ services:
 
 volumes:
   postgres_data:
+  backend_uploads:
