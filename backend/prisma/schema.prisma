@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  OWNER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum VenueCategory {
+  Wedding
+  Sport
+  Celebration
+  Diaspora
+  Conference
+  Other
+}
+
+enum InquiryType {
+  GENERAL
+  WEDDING
+  SPORT
+  DIASPORA
+  CELEBRATION
+  CONFERENCE
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         Role      @default(USER)
+  phone        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  inquiries    Inquiry[]
+  reviews      Review[]
+  forumPosts   ForumPost[]
+}
+
+model Venue {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  description String
+  city        String
+  address     String
+  category    VenueCategory
+  capacity    Int
+  priceFrom   Decimal       @db.Decimal(10, 2)
+  phone       String
+  email       String
+  imageUrl    String
+  isFeatured  Boolean       @default(false)
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  inquiries   Inquiry[]
+  reviews     Review[]
+}
+
+model ContactMessage {
+  id        String      @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  type      InquiryType @default(GENERAL)
+  message   String
+  createdAt DateTime    @default(now())
+}
+
+model Inquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  eventDate DateTime?
+  guests    Int?
+  message   String
+  desiredTime String?
+  status    String   @default("PENDING")
+  venueId   String
+  userId    String?
+  createdAt DateTime @default(now())
+  venue     Venue    @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String
+  name      String
+  venueId   String
+  userId    String?
+  createdAt DateTime @default(now())
+  venue     Venue    @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model ForumPost {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  city      String?
+  userId    String?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}

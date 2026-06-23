@@ -1,0 +1,27 @@
+ALTER TABLE "Inquiry" ADD COLUMN "desiredTime" TEXT;
+ALTER TABLE "Inquiry" ADD COLUMN "status" TEXT NOT NULL DEFAULT 'PENDING';
+
+CREATE TABLE "Review" (
+  "id" TEXT NOT NULL,
+  "rating" INTEGER NOT NULL,
+  "comment" TEXT NOT NULL,
+  "name" TEXT NOT NULL,
+  "venueId" TEXT NOT NULL,
+  "userId" TEXT,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
+);
+
+CREATE TABLE "ForumPost" (
+  "id" TEXT NOT NULL,
+  "title" TEXT NOT NULL,
+  "body" TEXT NOT NULL,
+  "city" TEXT,
+  "userId" TEXT,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "ForumPost_pkey" PRIMARY KEY ("id")
+);
+
+ALTER TABLE "Review" ADD CONSTRAINT "Review_venueId_fkey" FOREIGN KEY ("venueId") REFERENCES "Venue"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Review" ADD CONSTRAINT "Review_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "ForumPost" ADD CONSTRAINT "ForumPost_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
